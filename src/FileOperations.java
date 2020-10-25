@@ -14,6 +14,8 @@ public class FileOperations {
             } else {
                 readFile(serverParameters);
             }
+        } else {
+            writeFile(serverParameters);
         }
     }
 
@@ -68,12 +70,28 @@ public class FileOperations {
         }
     }
 
-//    public void writeFile(ServerParameters requestParameters, String response) throws IOException {
-//        BufferedWriter out = new BufferedWriter(new FileWriter("../../../files/" + requestParameters.outputFile));
-//        out.write(response);
-//        out.flush();
-//        out.close();
-//    }
+    public void writeFile(ServerParameters serverParameters) {
+        try {
+            System.out.println("Writefile");
+            String filePath = Config.path.concat(serverParameters.filename);
+            Path path = Paths.get(filePath).normalize().toAbsolutePath();
+            Path resolvedPath = path.resolve(path).normalize().toAbsolutePath();
+
+            BufferedWriter out = new BufferedWriter(new FileWriter(resolvedPath.toString().concat(".txt")));
+            out.write(serverParameters.payload);
+            out.flush();
+            out.close();
+
+            serverParameters.postSuccess = true;
+        } catch (FileSystemException ex) {
+            System.out.println("Invalid Directory");
+            ex.printStackTrace();
+        }
+        catch (IOException ex) {
+            System.out.println("Something went wrong. Could not write on to the file.");
+            ex.printStackTrace();
+        }
+    }
 
     public static boolean validatePath(ServerParameters serverParameters) {
         String path = Config.path.concat(serverParameters.filename);

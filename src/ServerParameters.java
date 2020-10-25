@@ -1,6 +1,7 @@
 public class ServerParameters {
     boolean hasData;
     boolean hasFileList;
+    boolean postSuccess;
 
     String filename;
     String data;
