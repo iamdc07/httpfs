@@ -68,9 +68,7 @@ public class HttpResponse {
         response = response.concat("Server: httpfs/v1.0" + "\r\n");
         response = response.concat("\r\n");
 
-        if (serverParameters.hasFileList)
-            response = response.concat(serverParameters.fileList);
-        else if (serverParameters.hasData)
+        if (serverParameters.hasData)
             response = response.concat(serverParameters.data);
 
         serverParameters.response = response;
