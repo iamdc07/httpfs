@@ -12,9 +12,9 @@ import java.util.Scanner;
 
 public class Server {
     public static void main(String[] args) throws IOException {
-        HttpRequest httpRequest = new HttpRequest();
+
         Scanner scanner = new Scanner(System.in);
-        Charset utf8 = StandardCharsets.UTF_8;
+
 
         String response = "";
 
@@ -31,46 +31,12 @@ public class Server {
                     serverSocketChannel.socket().bind(new InetSocketAddress(Config.port));
 
                     while (true) {
-                        StringBuilder sb = new StringBuilder();
+
                         System.out.println("Listening on Port " + Config.port);
                         socketChannel = serverSocketChannel.accept();
 
-                        //Perform the operations on received request...
-                        if (Config.isVerbose)
-                            System.out.println("Incoming Connection:  " + socketChannel.getRemoteAddress());
-
-                        ByteBuffer byteBuffer = ByteBuffer.allocate(1024);
-                        System.out.println("BEFORE:" + byteBuffer.hasRemaining());
-                        ServerParameters serverParameters = new ServerParameters();
-                        while (byteBuffer.hasRemaining()) {
-//                            System.out.println("Hello");
-                            int length = socketChannel.read(byteBuffer);
-//                            System.out.println(length);
-//                            System.out.println(byteBuffer.hasRemaining());
-                            if (length == -1)
-                                break;
-
-                            if (length > 0) {
-                                byteBuffer.flip();
-
-                                String lines = String.valueOf(utf8.decode(byteBuffer));
-//                                System.out.println(lines);
-//                                System.out.println(byteBuffer.hasRemaining());
-                                ByteBuffer buf = utf8.encode(lines);
-                                sb.append(lines);
-//                                System.out.println(socketChannel.read(byteBuffer));
-//                                response = response.concat(lines);
-//                                System.out.println("END:" + byteBuffer.hasRemaining());
-                            }
-                        }
-                        byteBuffer.clear();
-
-                        httpRequest.processRequest(sb, serverParameters);
-                        // Send data back to the client
-                        ByteBuffer buf = utf8.encode(serverParameters.response);
-                        socketChannel.write(buf);
-                        socketChannel.finishConnect();
-                        socketChannel.close();
+                        Serve serve = new Serve(socketChannel);
+                        serve.start();
                     }
                 } else {
                     System.out.println("Please enter a valid command.\n");
@@ -89,7 +55,7 @@ public class Server {
 
         if (words[0].equalsIgnoreCase("httpfs")) {
 
-            for (int i = 1; i < words.length; i++) {
+            for (int i = 0; i < words.length; i++) {
                 switch (words[i]) {
                     case "-v":
                         Config.isVerbose = true;
@@ -105,7 +71,7 @@ public class Server {
                         i++;
                         break;
                     default:
-                        return;
+                        Config.isValid = true;
                 }
             }
 
@@ -114,8 +80,11 @@ public class Server {
                 Config.hasPort = true;
             }
 
-            if (Config.hasPath)
-                Config.isValid = true;
+            if (!Config.hasPath)
+            {
+                Config.path = "./";
+                Config.hasPath = true;
+            }
         }
     }
 }
