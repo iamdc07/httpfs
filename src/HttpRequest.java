@@ -32,11 +32,11 @@ public class HttpRequest {
         System.out.println(requestType);
         System.out.println(payload);
 
-        //if (FileOperations.validatePath(serverParameters)) {
+        if (FileOperations.validatePath(serverParameters)) {
             HttpResponse httpResponse = new HttpResponse();
             httpResponse.processResponse(serverParameters);
-//        } else
- //           errorResponse(serverParameters);
+        } else
+            errorResponse(serverParameters);
     }
 
     public void errorResponse(ServerParameters serverParameters) {
