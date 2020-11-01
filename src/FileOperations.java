@@ -20,7 +20,7 @@ public class FileOperations {
         }
     }
 
-    public void listFiles(ServerParameters serverParameters) {
+    public synchronized void listFiles(ServerParameters serverParameters) {
         try {
             StringBuilder sb = new StringBuilder();
             String filePath = Config.path.concat(serverParameters.filename);
@@ -46,7 +46,7 @@ public class FileOperations {
     }
 
     @SuppressWarnings("DuplicatedCode")
-    public void readFile(ServerParameters serverParameters) {
+    public synchronized void readFile(ServerParameters serverParameters) {
         try {
             System.out.println("Readfile");
             String filePath = Config.path.concat(serverParameters.filename.concat(serverParameters.extension));
@@ -55,10 +55,8 @@ public class FileOperations {
 
             String data = new String(Files.readAllBytes(resolvedPath));
 
-            if (data.length() != 0) {
-                serverParameters.hasData = true;
-                serverParameters.data = data;
-            }
+            serverParameters.hasData = true;
+            serverParameters.data = data;
 
             if (Config.isVerbose)
                 System.out.println("Successfully Finished File Operation\n");

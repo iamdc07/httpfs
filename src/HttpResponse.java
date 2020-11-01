@@ -26,6 +26,7 @@ public class HttpResponse {
 
         String response = "";
 
+
         if (serverParameters.hasFileList) {
             response = response.concat("HTTP/1.0 " + ErrorCodes.SUCCESS + "\r\n");
         } else if (serverParameters.hasData) {
@@ -65,7 +66,6 @@ public class HttpResponse {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
         LocalDateTime now = LocalDateTime.now();
 
-        System.out.println("Response");
         fileOperations.processFileOperation(serverParameters);
 
         String response = "";
