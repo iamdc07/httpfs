@@ -6,10 +6,11 @@ import java.nio.file.*;
 
 public class FileOperations {
     public void processFileOperation(ServerParameters serverParameters) {
+        if (Config.isVerbose)
+            System.out.println("Performing File Operation");
 
         if (serverParameters.requestType.equalsIgnoreCase("GET")) {
             if (serverParameters.filename.equalsIgnoreCase("") || serverParameters.filename.equalsIgnoreCase("/")) {
-                System.out.println("process");
                 listFiles(serverParameters);
             } else {
                 readFile(serverParameters);
@@ -21,7 +22,6 @@ public class FileOperations {
 
     public void listFiles(ServerParameters serverParameters) {
         try {
-            System.out.println("Listfiles");
             StringBuilder sb = new StringBuilder();
             String filePath = Config.path.concat(serverParameters.filename);
             Path path = Paths.get(filePath).normalize().toAbsolutePath();
@@ -37,7 +37,8 @@ public class FileOperations {
             serverParameters.fileList = sb.toString();
             serverParameters.hasFileList = true;
 
-//            System.out.println(sb.toString());
+            if (Config.isVerbose)
+                System.out.println("Successfully Finished File Operation\n");
         } catch (Exception ex) {
             System.out.println("Something went wrong. Could not list the files.");
             ex.printStackTrace();
@@ -54,16 +55,13 @@ public class FileOperations {
 
             String data = new String(Files.readAllBytes(resolvedPath));
 
-//            BufferedWriter out = new BufferedWriter(new FileWriter("./Newfile.txt"));
-//            out.write(data);
-//            out.flush();
-//            out.close();
-
             if (data.length() != 0) {
                 serverParameters.hasData = true;
                 serverParameters.data = data;
             }
-//            System.out.println(sb.toString());
+
+            if (Config.isVerbose)
+                System.out.println("Successfully Finished File Operation\n");
         } catch (FileSystemException ex) {
             serverParameters.hasData = false;
             System.out.println("Invalid Directory");
@@ -76,7 +74,6 @@ public class FileOperations {
 
     public synchronized void writeFile(ServerParameters serverParameters) {
         try {
-            System.out.println("Writefile");
             String filePath = Config.path.concat(serverParameters.filename);
             Path path = Paths.get(filePath).normalize().toAbsolutePath();
             Path resolvedPath = path.resolve(path).normalize().toAbsolutePath();
@@ -87,6 +84,9 @@ public class FileOperations {
             out.close();
 
             serverParameters.postSuccess = true;
+
+            if (Config.isVerbose)
+                System.out.println("Successfully Finished File Operation\n");
         } catch (FileSystemException ex) {
             System.out.println("Invalid Directory");
             ex.printStackTrace();
@@ -102,8 +102,8 @@ public class FileOperations {
         Path accessPath = absPath.resolve(path).normalize().toAbsolutePath();
         Path serverPath = Paths.get(Config.path).normalize().toAbsolutePath().resolve(Config.path).normalize().toAbsolutePath();
 
-        System.out.println("Client:" + accessPath);
-        System.out.println("Server:" + serverPath);
+        if (Config.isVerbose)
+            System.out.println("Validating File Path");
 
         return (accessPath.startsWith(serverPath));
     }

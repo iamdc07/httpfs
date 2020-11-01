@@ -1,3 +1,4 @@
+import model.Config;
 import model.ServerParameters;
 
 import java.time.LocalDateTime;
@@ -7,9 +8,6 @@ public class HttpRequest {
 
     public void processRequest(StringBuilder sb, ServerParameters serverParameters) {
         String incoming = sb.toString();
-        String file = "", payload = "", requestType = "";
-        System.out.println("HEELOOO WORLD");
-        System.out.println(sb.toString());
         String[] lines = incoming.split("\r\n");
 
         for (int i = 0; i < lines.length; i++) {
@@ -45,15 +43,21 @@ public class HttpRequest {
                 serverParameters.payload = lines[i + 1];
             }
         }
-        System.out.println(file);
-        System.out.println(requestType);
-        System.out.println(payload);
+
+        if (Config.isVerbose)
+            System.out.println("Request Processed\n");
 
         if (FileOperations.validatePath(serverParameters)) {
+            if (Config.isVerbose)
+                System.out.println("Successfully Validated File Path\n");
+
             HttpResponse httpResponse = new HttpResponse();
             httpResponse.processResponse(serverParameters);
-        } else
+        } else {
+            if (Config.isVerbose)
+                System.out.println("Invalid Access made by Client, sending Error Response\n");
             errorResponse(serverParameters);
+        }
     }
 
     @SuppressWarnings("DuplicatedCode")

@@ -1,3 +1,4 @@
+import model.Config;
 import model.ServerParameters;
 
 import java.time.LocalDateTime;
@@ -5,6 +6,9 @@ import java.time.format.DateTimeFormatter;
 
 public class HttpResponse {
     public void processResponse(ServerParameters serverParameters) {
+        if (Config.isVerbose)
+            System.out.println("Processing Response");
+
         if (serverParameters.requestType.equalsIgnoreCase("GET")) {
             serveGetRequest(serverParameters);
         } else {
@@ -18,7 +22,6 @@ public class HttpResponse {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
         LocalDateTime now = LocalDateTime.now();
 
-        System.out.println("Response");
         fileOperations.processFileOperation(serverParameters);
 
         String response = "";
@@ -51,6 +54,9 @@ public class HttpResponse {
             response = response.concat(serverParameters.data);
 
         serverParameters.response = response;
+
+        if (Config.isVerbose)
+            System.out.println("Generated Response for Get Response, preparing to send...\n");
     }
 
     @SuppressWarnings("DuplicatedCode")
@@ -80,5 +86,8 @@ public class HttpResponse {
             response = response.concat(serverParameters.data);
 
         serverParameters.response = response;
+
+        if (Config.isVerbose)
+            System.out.println("Generated Response for Post Request, preparing to send...\n");
     }
 }

@@ -15,24 +15,19 @@ public class Server {
 
         Scanner scanner = new Scanner(System.in);
 
-
-        String response = "";
-
         SocketChannel socketChannel = null;
         try {
             while (!Config.isValid) {
                 String command = scanner.nextLine();
-//            System.out.println(serverParameters.isValid);
                 validate(command);
 
                 if (Config.isValid) {
                     ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
 
                     serverSocketChannel.socket().bind(new InetSocketAddress(Config.port));
+                    System.out.println("Listening on Port " + Config.port);
 
                     while (true) {
-
-                        System.out.println("Listening on Port " + Config.port);
                         socketChannel = serverSocketChannel.accept();
 
                         Serve serve = new Serve(socketChannel);
