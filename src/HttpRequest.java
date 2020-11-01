@@ -24,7 +24,24 @@ public class HttpRequest {
                 }
             }
 
-            if (lines[i].equalsIgnoreCase("")) {
+            if (words[0].equalsIgnoreCase("Content-Disposition:")) {
+                serverParameters.isContentDisposition = true;
+
+                if (words[1].equalsIgnoreCase("inline"))
+                    serverParameters.isInline = true;
+            }
+
+            if (words[0].equalsIgnoreCase("Content-Type:")) {
+                if (words[1].equalsIgnoreCase("application/json")) {
+                    serverParameters.extension = ".json";
+                } else if (words[1].equalsIgnoreCase("application/xml")) {
+                    serverParameters.extension = ".xml";
+                } else if (words[1].equalsIgnoreCase("application/html")) {
+                    serverParameters.extension = ".html";
+                }
+            }
+
+            if (lines[i].equalsIgnoreCase("") && i != lines.length - 1) {
                 serverParameters.payload = lines[i + 1];
             }
         }
@@ -39,6 +56,7 @@ public class HttpRequest {
             errorResponse(serverParameters);
     }
 
+    @SuppressWarnings("DuplicatedCode")
     public void errorResponse(ServerParameters serverParameters) {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
         LocalDateTime now = LocalDateTime.now();

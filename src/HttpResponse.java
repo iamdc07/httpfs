@@ -34,6 +34,14 @@ public class HttpResponse {
         response = response.concat("Date: " + dtf.format(now) + "\r\n");
         response = response.concat("Content-Length: " + serverParameters.data.length() + "\r\n");
         response = response.concat("Connection: " + "close" + "\r\n");
+
+        if (serverParameters.isContentDisposition) {
+            if (serverParameters.isInline)
+                response = response.concat("Content-Disposition: inline\r\n");
+            else
+                response = response.concat("Content-Disposition:" + " attachment; filename = test.txt\r\n");
+        }
+
         response = response.concat("Server: httpfs/v1.0" + "\r\n");
         response = response.concat("\r\n");
 

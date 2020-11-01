@@ -4,6 +4,8 @@ public class ServerParameters {
     public boolean hasData;
     public boolean hasFileList;
     public boolean postSuccess;
+    public boolean isContentDisposition;
+    public boolean isInline;
 
     public String filename;
     public String data;
@@ -11,6 +13,7 @@ public class ServerParameters {
     public String requestType;
     public String payload;
     public String response;
+    public String extension;
 
     public ServerParameters() {
         filename = "";
@@ -19,5 +22,6 @@ public class ServerParameters {
         payload = "";
         filename = "";
         response = "";
+        extension = ".txt";
     }
 }

@@ -2,10 +2,7 @@ import model.Config;
 import model.ServerParameters;
 
 import java.io.*;
-import java.nio.file.FileSystemException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 
 public class FileOperations {
     public void processFileOperation(ServerParameters serverParameters) {
@@ -51,11 +48,16 @@ public class FileOperations {
     public void readFile(ServerParameters serverParameters) {
         try {
             System.out.println("Readfile");
-            String filePath = Config.path.concat(serverParameters.filename);
+            String filePath = Config.path.concat(serverParameters.filename.concat(serverParameters.extension));
             Path path = Paths.get(filePath).normalize().toAbsolutePath();
             Path resolvedPath = path.resolve(path).normalize().toAbsolutePath();
 
             String data = new String(Files.readAllBytes(resolvedPath));
+
+//            BufferedWriter out = new BufferedWriter(new FileWriter("./Newfile.txt"));
+//            out.write(data);
+//            out.flush();
+//            out.close();
 
             if (data.length() != 0) {
                 serverParameters.hasData = true;
@@ -66,21 +68,20 @@ public class FileOperations {
             serverParameters.hasData = false;
             System.out.println("Invalid Directory");
             ex.printStackTrace();
-        }
-        catch (IOException ex) {
+        } catch (IOException ex) {
             System.out.println("Something went wrong. Could not read the file.");
             ex.printStackTrace();
         }
     }
 
-    public void writeFile(ServerParameters serverParameters) {
+    public synchronized void writeFile(ServerParameters serverParameters) {
         try {
             System.out.println("Writefile");
             String filePath = Config.path.concat(serverParameters.filename);
             Path path = Paths.get(filePath).normalize().toAbsolutePath();
             Path resolvedPath = path.resolve(path).normalize().toAbsolutePath();
 
-            BufferedWriter out = new BufferedWriter(new FileWriter(resolvedPath.toString().concat(".txt")));
+            BufferedWriter out = new BufferedWriter(new FileWriter(resolvedPath.toString().concat(serverParameters.extension)));
             out.write(serverParameters.payload);
             out.flush();
             out.close();
@@ -89,8 +90,7 @@ public class FileOperations {
         } catch (FileSystemException ex) {
             System.out.println("Invalid Directory");
             ex.printStackTrace();
-        }
-        catch (IOException ex) {
+        } catch (IOException ex) {
             System.out.println("Something went wrong. Could not write on to the file.");
             ex.printStackTrace();
         }
